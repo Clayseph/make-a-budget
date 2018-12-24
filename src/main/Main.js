@@ -14,29 +14,31 @@ import './Main.css';
 export default class Main extends Component{
     constructor(){
         super()
-        this.state = {}
+        this.state = {
+            budget:{}
+        }
     }
 
     handleChange = (event) => {
         const value = parseInt(event.target.value);
-        this.setState({ [event.target.name] : value });
+        const budget = {...this.state.budget, [event.target.name] : value };
+        this.setState({ budget });
       }
     addCategory = () => {
 
     }
 
-    formatIncomeData = (event) => {
-        console.log(this.state)
-        if(event.key === 'Enter'){
-         const budget = {data:[
-            ['Category','Percent of Love'],
-            ['Extra Income',this.state.income],
-            ['Food',600],
-            ['Rent',15],
-            ['Fun',60]
-        ]};
-        this.setState({ budget })
-        }
+    formatIncomeData = () => {
+        let budget = this.state.budget;
+        //needed for initial chart setup
+        let data = [['Category','Percent of Income']];
+        Object.keys(budget).forEach(function(key, index) {
+            var value = budget[key];
+            const category = [`${key}`, value];
+            data.push(category);
+        });
+        console.log('data',data)
+        this.setState({ chartBudget: data })
     }
 
     render(){
@@ -45,16 +47,16 @@ export default class Main extends Component{
                 <div className='form'>
                 <FormControl className={'formControl'}>
                     <InputLabel htmlFor="component-simple">Monthly Income</InputLabel>
-                    <Input id="component-simple" name='income' value={this.state.income ? this.state.income : ''} onChange={this.handleChange} onKeyPress={this.formatIncomeData} />
+                    <Input id="component-simple" name='income' value={this.state.budget.income ? this.state.budget.income : ''} onChange={this.handleChange} />
                 </FormControl>
                 <FormControl className={'formControl'}>
                     <InputLabel htmlFor="component-simple">Monthly Rent</InputLabel>
-                    <Input id="component-simple" name='rent' value={this.state.rent ? this.state.rent : '' } onChange={this.handleChange} onKeyPress={this.formatIncomeData} />
+                    <Input id="component-simple" name='rent' value={this.state.budget.rent ? this.state.budget.rent : '' } onChange={this.handleChange} />
                 </FormControl>
                 <Fab color="primary" aria-label="Add" >
                     <AddIcon />
                 </Fab>
-                <Button className='submit' variant="contained" color="primary" >Submit</Button>
+                <Button onClick={ this.formatIncomeData } className='submit' variant="contained" color="primary" >Submit</Button>
                 </div>
                 <div className='chart'>
                     <Chart
@@ -62,7 +64,7 @@ export default class Main extends Component{
                         height={'300px'}
                         chartType="PieChart"
                         loader={<div>Loading Chart</div>}
-                        data={this.state.budget ? this.state.budget.data : budget.data}
+                        data={this.state.chartBudget ? this.state.chartBudget : budget.data}
                         options={{
                             title: 'Budget',
                         }}
