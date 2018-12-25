@@ -18,27 +18,50 @@ export default class Main extends Component{
             budget:{}
         }
     }
-
-    handleChange = (event) => {
-        const value = parseInt(event.target.value);
-        const budget = {...this.state.budget, [event.target.name] : value };
-        this.setState({ budget });
-      }
+    
     addCategory = () => {
-
+        const key = this.state.category;
+        const value = this.state.categoryValue;
+        let budget = this.state.budget;
+        budget = {...budget, [key] : value };
+        this.setState({ budget })
     }
 
     formatIncomeData = () => {
         let budget = this.state.budget;
+        let income = this.state.income;
+        let leftOverIncome = income;
         //needed for initial chart setup
         let data = [['Category','Percent of Income']];
         Object.keys(budget).forEach(function(key, index) {
             var value = budget[key];
+            leftOverIncome -= value;
             const category = [`${key}`, value];
             data.push(category);
         });
-        console.log('data',data)
+        data.push(['Remaining Income', leftOverIncome])
+
         this.setState({ chartBudget: data })
+    }
+
+    handleBudgetChange = (event) => {
+        const value = parseInt(event.target.value);
+        const budget = {...this.state.budget, [event.target.name] : value };
+        this.setState({ budget });
+      }
+
+    handleCategoryChange = (event) =>{
+        this.setState({[event.target.name] : event.target.value });
+    }
+    
+    handleCategoryValueChange = (event) =>{
+        const value = parseInt(event.target.value);
+        this.setState({[event.target.name] : value });
+    }
+
+    handleIncomeInput = (event) =>{
+        const income = parseInt(event.target.value);
+        this.setState({income})
     }
 
     render(){
@@ -47,21 +70,31 @@ export default class Main extends Component{
                 <div className='form'>
                 <FormControl className={'formControl'}>
                     <InputLabel htmlFor="component-simple">Monthly Income</InputLabel>
-                    <Input id="component-simple" name='income' value={this.state.budget.income ? this.state.budget.income : ''} onChange={this.handleChange} />
+                    <Input id="component-simple" name='income' value={this.state.income ? this.state.income : ''} onChange={this.handleIncomeInput} />
                 </FormControl>
                 <FormControl className={'formControl'}>
                     <InputLabel htmlFor="component-simple">Monthly Rent</InputLabel>
-                    <Input id="component-simple" name='rent' value={this.state.budget.rent ? this.state.budget.rent : '' } onChange={this.handleChange} />
+                    <Input id="component-simple" name='rent' value={this.state.budget.rent ? this.state.budget.rent : '' } onChange={this.handleBudgetChange} />
                 </FormControl>
-                <Fab color="primary" aria-label="Add" >
-                    <AddIcon />
-                </Fab>
+                <div className={'addCategory'}>
+                    <FormControl className={'formControl'}>
+                        <InputLabel htmlFor="component-simple">Category</InputLabel>
+                        <Input id="component-simple" name='category' value={this.state.category ? this.state.category : '' } onChange={this.handleCategoryChange} />
+                    </FormControl>
+                    <FormControl className={'formControl'}>
+                        <InputLabel htmlFor="component-simple">Amount</InputLabel>
+                        <Input id="component-simple" type='numeric' name='categoryValue' value={this.state.categoryValue ? this.state.categoryValue : '' } onChange={this.handleCategoryValueChange} />
+                    </FormControl>
+                    <Fab color="primary" aria-label="Add" onClick={this.addCategory}>
+                        <AddIcon/>
+                    </Fab>
+                </div>
                 <Button onClick={ this.formatIncomeData } className='submit' variant="contained" color="primary" >Submit</Button>
                 </div>
                 <div className='chart'>
                     <Chart
-                        width={'500px'}
-                        height={'300px'}
+                        width={'700px'}
+                        height={'700px'}
                         chartType="PieChart"
                         loader={<div>Loading Chart</div>}
                         data={this.state.chartBudget ? this.state.chartBudget : budget.data}
