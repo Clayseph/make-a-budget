@@ -7,17 +7,17 @@ import { STORE_ACTIONS } from './actions';
 
 const initState = {
 
-}
+};
 
-export const dataReducer = (state = initState, action ) => {
-    switch(action.type){
-        case(STORE_ACTIONS.UPDATE_BUDGET_LIST):
-            return {...state, budgetList: action.budgetList}
-        default:
-            return state
-    }
-}
+export const dataReducer = (state = initState, action) => {
+  switch (action.type) {
+    case (STORE_ACTIONS.UPDATE_BUDGET_LIST):
+      return { ...state, budget: action.budget };
+    default:
+      return state;
+  }
+};
 
-let store = createStore(dataReducer, applyMiddleware(thunk, createLogger()));
+const store = createStore(dataReducer, applyMiddleware(thunk, createLogger()));
 
 export default store;
