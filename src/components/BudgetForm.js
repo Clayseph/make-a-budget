@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add'
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
+
+import CategoryInput from './CategoryInput';
 
 export default class BudgetForm extends Component {
     constructor(){
@@ -72,19 +71,12 @@ export default class BudgetForm extends Component {
                     <InputLabel htmlFor="component-simple">Monthly Rent</InputLabel>
                     <Input id="component-simple" name="rent" value={this.state.budget.rent ? this.state.budget.rent : ''} onChange={this.handleBudgetChange} />
                 </FormControl>
-                <div className="addCategory">
-                    <FormControl className="formControl">
-                        <InputLabel htmlFor="component-simple">Category</InputLabel>
-                        <Input id="component-simple" name="category" value={this.state.category ? this.state.category : ''} onChange={this.handleCategoryChange} />
-                    </FormControl>
-                    <FormControl className="formControl">
-                        <InputLabel htmlFor="component-simple">Amount</InputLabel>
-                        <Input id="component-simple" type="numeric" name="categoryValue" value={this.state.categoryValue ? this.state.categoryValue : ''} onChange={this.handleCategoryValueChange} />
-                    </FormControl>
-                    <Fab color="primary" aria-label="Add" onClick={this.addCategory}>
-                        <AddIcon />
-                    </Fab>
-                </div>
+                <CategoryInput 
+                    addAction={this.addCategory}
+                    amount={this.state.categoryValue} 
+                    category={this.state.category} 
+                    onAmountChange={this.handleCategoryValueChange}
+                    onCategoryChange={this.handleCategoryChange}/> 
                 <Button onClick={this.formatIncomeData} className="submit" variant="contained" color="primary">Submit</Button>
             </div>
     );
