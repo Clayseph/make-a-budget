@@ -8,7 +8,8 @@ export default class BudgetForm extends Component {
     constructor(){
         super()
         this.state = {
-            budget:{}
+            budget:{},
+            categories:[]
         } 
     }
     
@@ -17,7 +18,13 @@ export default class BudgetForm extends Component {
         const value = this.state.categoryValue;
         let budget = this.state.budget;
         budget = {...budget, [key] : value };
-        this.setState({ budget })
+        let categories = this.state.categories;
+        categories.push({ name: key })
+        this.setState({ 
+            budget,
+            category:'',
+            categoryValue:''
+         });
     }
 
     formatIncomeData = () => {
@@ -39,7 +46,6 @@ export default class BudgetForm extends Component {
     }
 
     handleBudgetChange = (event) => {
-        console.log(event.target.name)
         const value = parseInt(event.target.value);
         const budget = {...this.state.budget, [event.target.name] : value };
         this.setState({ budget });
@@ -59,20 +65,51 @@ export default class BudgetForm extends Component {
         this.setState({income})
     }
 
-    
-
-  render() {
-    return (
-            <div className="form">
-                <InputWrapper title={'Monthly Income'} name={'income'} value={this.state.income ? this.state.income : ''} onChange={this.handleIncomeInput}/>
-                <InputWrapper title={'Monthly Rent'} name={'rent'} value={this.state.budget.rent ? this.state.budget.rent : ''} onChange={this.handleBudgetChange}/>
-                <CategoryInput 
+    renderDynamicInputs(){
+        let components=[];
+        this.state.categories.forEach((category, index)=>{
+            components.push(
+                <InputWrapper 
+                    key={ index }
+                    name={ category.name } 
+                    onChange={ this.handleBudgetChange }
+                    title={ category.name } 
+                    value={ this.state.budget[category.name] ? this.state.budget[category.name] : '' } 
+                    />
+            );
+        });
+        //To ensure the last input is always a blank Category 
+        components.push(
+            <CategoryInput 
+                    key={'category'}
                     addAction={this.addCategory}
                     amount={this.state.categoryValue} 
                     category={this.state.category} 
                     onAmountChange={this.handleCategoryValueChange}
                     onCategoryChange={this.handleCategoryChange}
                 /> 
+        );
+        return components;
+    }
+
+    
+
+  render() {
+    return (
+            <div className="form">
+                <InputWrapper 
+                    name={'income'} 
+                    onChange={this.handleIncomeInput}
+                    title={'Monthly Income'} 
+                    value={this.state.income ? this.state.income : ''} 
+                    />
+                <InputWrapper 
+                    name={'Rent'} 
+                    onChange={this.handleBudgetChange}
+                    title={'Monthly Rent'} 
+                    value={this.state.budget.Rent ? this.state.budget.Rent : ''} 
+                    />
+                { this.renderDynamicInputs() }
                 <Button onClick={this.formatIncomeData} className="submit" variant="contained" color="primary">Submit</Button>
             </div>
     );
