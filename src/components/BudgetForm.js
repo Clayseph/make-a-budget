@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
 
 import CategoryInput from './CategoryInput';
+import InputWrapper from './InputWrapper';
 
 export default class BudgetForm extends Component {
     constructor(){
@@ -41,6 +39,7 @@ export default class BudgetForm extends Component {
     }
 
     handleBudgetChange = (event) => {
+        console.log(event.target.name)
         const value = parseInt(event.target.value);
         const budget = {...this.state.budget, [event.target.name] : value };
         this.setState({ budget });
@@ -60,23 +59,20 @@ export default class BudgetForm extends Component {
         this.setState({income})
     }
 
+    
+
   render() {
     return (
             <div className="form">
-                <FormControl className="formControl">
-                    <InputLabel htmlFor="component-simple">Monthly Income</InputLabel>
-                    <Input id="component-simple" name="income" value={this.state.income ? this.state.income : ''} onChange={this.handleIncomeInput} />
-                </FormControl>
-                <FormControl className="formControl">
-                    <InputLabel htmlFor="component-simple">Monthly Rent</InputLabel>
-                    <Input id="component-simple" name="rent" value={this.state.budget.rent ? this.state.budget.rent : ''} onChange={this.handleBudgetChange} />
-                </FormControl>
+                <InputWrapper title={'Monthly Income'} name={'income'} value={this.state.income ? this.state.income : ''} onChange={this.handleIncomeInput}/>
+                <InputWrapper title={'Monthly Rent'} name={'rent'} value={this.state.budget.rent ? this.state.budget.rent : ''} onChange={this.handleBudgetChange}/>
                 <CategoryInput 
                     addAction={this.addCategory}
                     amount={this.state.categoryValue} 
                     category={this.state.category} 
                     onAmountChange={this.handleCategoryValueChange}
-                    onCategoryChange={this.handleCategoryChange}/> 
+                    onCategoryChange={this.handleCategoryChange}
+                /> 
                 <Button onClick={this.formatIncomeData} className="submit" variant="contained" color="primary">Submit</Button>
             </div>
     );
